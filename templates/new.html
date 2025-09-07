@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>新規作成</h1>
+<form method="post" action="{{ url_for('create_entry') }}" enctype="multipart/form-data">
+  {{ form.csrf_token }}
+  <label for="title">タイトル</label>
+  {{ form.title(id="title") }}
+  <label for="body">本文</label>
+  {{ form.body(id="body", rows=8) }}
+  <label for="image">画像</label>
+  {{ form.image(id="image") }}
+  <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

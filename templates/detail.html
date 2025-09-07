@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ e.title }}</h1>
+<p><small>{{ e.created_at.strftime('%Y-%m-%d %H:%M') }}</small></p>
+
+{% if e.image_path %}
+  <p><img src="{{ url_for('uploaded_file', filename=e.image_path) }}" alt="{{ e.title }}" style="max-width:100%;height:auto"></p>
+{% endif %}
+
+<pre style="white-space:pre-wrap">{{ e.body }}</pre>
+
+<form method="post" action="{{ url_for('delete_entry', entry_id=e.id) }}" onsubmit="return confirm('削除しますか？')">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button type="submit">削除</button>
+  <a href="{{ url_for('edit_entry', entry_id=e.id) }}"><button type="button">編集</button></a>
+</form>
+{% endblock %}

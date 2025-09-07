@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>編集</h1>
+<form method="post" action="{{ url_for('update_entry', entry_id=e.id) }}" enctype="multipart/form-data">
+  {{ form.csrf_token }}
+  <label for="title">タイトル</label>
+  {{ form.title(id="title") }}
+  <label for="body">本文</label>
+  {{ form.body(id="body", rows=8) }}
+  <label for="image">画像（再指定で更新）</label>
+  {{ form.image(id="image") }}
+  <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

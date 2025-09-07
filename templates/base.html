@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>Diary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      :root{--w:720px;}
+      body{max-width:var(--w);margin:2rem auto;font-family:system-ui, sans-serif;line-height:1.6}
+      header a{margin-right:1rem}
+      .flash{padding:.5rem .75rem;border-radius:.25rem;margin:.5rem 0}
+      .success{background:#e7f7ee}
+      .error{background:#fde7e7}
+      form label{display:block;margin:.5rem 0 .25rem}
+      input[type=text], textarea{width:100%;padding:.5rem;border:1px solid #ccc;border-radius:.25rem}
+      button{padding:.5rem .9rem;border:1px solid #333;background:#fff;border-radius:.25rem;cursor:pointer}
+      ul{padding-left:1.2rem}
+      small{color:#666}
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="{{ url_for('index') }}">一覧</a>
+      <a href="{{ url_for('new_entry') }}">新規作成</a>
+    </header>
+
+    {% with msgs = get_flashed_messages(with_categories=True) %}
+      {% if msgs %}
+        {% for cat, msg in msgs %}
+          <div class="flash {{cat}}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </body>
+</html>
+
