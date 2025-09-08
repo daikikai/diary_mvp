@@ -3,6 +3,17 @@ os.environ["DB_URL"] = "sqlite:///:memory:"
 
 from app import create_app
 from models import db, Entry
+from models import db, Entry, User
+
+def login_as_alice(app, client):
+    with app.app_context():
+        if not db.session.execute(db.select(User).where(User.username=="alice")).scalar_one_or_none():
+            u = User(username="alice"); u.set_password("pass1234")
+            db.session.add(u); db.session.commit()
+    r = client.get("/login")
+    import re
+    token = re.search(rb'name="csrf_token".*?value="([^"]+)"', r.data, re.S).group(1).decode()
+    client.post("/login", data={"username":"alice","password":"pass1234","csrf_token":token}, follow_redirects=True)
 
 def make_app_with_one():
     app = create_app()
@@ -22,48 +33,36 @@ def extract_csrf(html_bytes: bytes) -> str:
 def test_edit_update_ok():
     app = make_app_with_one()
     c = app.test_client()
+    login_as_alice(app, c)  # ← 追加
 
-    # 1) 編集フォームGET（EntryForm経由のトークン）
     r = c.get("/entry/1/edit")
     assert r.status_code == 200
     token = extract_csrf(r.data)
 
-    # 2) POST更新（CSRFトークン同梱）
     r2 = c.post("/entry/1/update", data={
-        "title": "After",
-        "body": "New body",
-        "csrf_token": token
+        "title":"After","body":"New body","csrf_token":token
     }, follow_redirects=True)
     assert r2.status_code == 200
-
-    # 日本語メッセージは bytes でなく文字列として比較
     html = r2.get_data(as_text=True)
-    assert "更新しました" in html
-    assert "After" in html  # 詳細ページに反映
+    assert "更新しました" in html and "After" in html
 
-    # DB確認
     with app.app_context():
         e = db.session.get(Entry, 1)
-        assert e.title == "After"
-        assert e.body == "New body"
+        assert e.title=="After" and e.body=="New body"
 
 def test_delete_ok_with_csrf():
     app = make_app_with_one()
     c = app.test_client()
+    login_as_alice(app, c)  # ← 追加
 
-    # 1) 詳細ページGET→ csrf_token() を抽出（detail.htmlの hidden から）
     r = c.get("/entry/1")
     assert r.status_code == 200
     token = extract_csrf(r.data)
 
-    # 2) POST削除
-    r2 = c.post("/entry/1/delete", data={"csrf_token": token}, follow_redirects=True)
+    r2 = c.post("/entry/1/delete", data={"csrf_token":token}, follow_redirects=True)
     assert r2.status_code == 200
+    assert "削除しました" in r2.get_data(as_text=True)
 
-    # ここも文字列で比較
-    html = r2.get_data(as_text=True)
-    assert "削除しました" in html
-
-    # DB確認
     with app.app_context():
         assert db.session.get(Entry, 1) is None
+

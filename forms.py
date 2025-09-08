@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Length
 from flask_wtf.file import FileField, FileAllowed
 
@@ -9,3 +9,8 @@ class EntryForm(FlaskForm):
     image = FileField("画像（任意）",
         validators=[FileAllowed(["jpg","jpeg","png","gif","webp"], "画像のみ")])
     submit = SubmitField("保存")
+
+class LoginForm(FlaskForm):
+    username = StringField("ユーザー名", validators=[DataRequired(), Length(max=50)])
+    password = PasswordField("パスワード", validators=[DataRequired()])
+    submit = SubmitField("ログイン")

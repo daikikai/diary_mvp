@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>ログイン</h1>
+<form method="post" action="{{ url_for('login') }}">
+  {{ form.csrf_token }}
+  <label>ユーザー名</label>
+  {{ form.username() }}
+  <label>パスワード</label>
+  {{ form.password() }}
+  <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

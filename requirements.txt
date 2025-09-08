@@ -6,3 +6,6 @@ email-validator
 Werkzeug
 python-dotenv
 pytest
+Flask-Login
+
+Alembic

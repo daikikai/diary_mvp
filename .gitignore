@@ -8,3 +8,7 @@ instance/
 .env
 uploads/
 .diary.db
+
+*.db
+.env
+uploads/
