@@ -9,3 +9,5 @@ pytest
 Flask-Login
 
 Alembic
+
+gunicorn
