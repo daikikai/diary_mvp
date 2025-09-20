@@ -11,3 +11,7 @@ Flask-Login
 Alembic
 
 gunicorn
+
+psycopg[binary]==3.2.*
+
+psycopg[binary]
