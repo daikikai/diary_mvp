@@ -223,3 +223,30 @@ def create_app():
 app = create_app()
 # 便利に参照できるように（任意）
 app.db = db
+
+
+
+# --- CLI: 初回の管理ユーザー作成 ---
+import click
+from models import db, User
+from werkzeug.security import generate_password_hash
+
+@app.cli.command("create_admin")
+@click.argument("username")
+@click.argument("password")
+def create_admin(username, password):
+    """例: flask --app app create_admin admin 'Passw0rd!'"""
+    with app.app_context():
+        if User.query.filter_by(username=username).first():
+            print("既に存在します:", username)
+            return
+        u = User(username=username)
+        # set_password() があればそれを使う。無ければ password_hash を直接設定
+        if hasattr(u, "set_password"):
+            u.set_password(password)
+        else:
+            u.password_hash = generate_password_hash(password)
+        db.session.add(u)
+        db.session.commit()
+        print("作成OK:", username)
+
