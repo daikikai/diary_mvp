@@ -1,12 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>ログイン</h1>
-<form method="post" action="{{ url_for('login') }}">
-  {{ form.csrf_token }}
-  <label>ユーザー名</label>
-  {{ form.username() }}
-  <label>パスワード</label>
-  {{ form.password() }}
-  <p>{{ form.submit() }}</p>
-</form>
+  <h1>ログイン</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <p class="flash {{cat}}">{{ msg }}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="post">
+    {{ form.csrf_token }}
+    <p>
+      {{ form.email.label }}<br>
+      {{ form.email(size=32) }}
+    </p>
+    <p>
+      {{ form.password.label }}<br>
+      {{ form.password(size=32) }}
+    </p>
+    <p>{{ form.submit() }}</p>
+  </form>
 {% endblock %}

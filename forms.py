@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Length
-from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email
 
 class EntryForm(FlaskForm):
     title = StringField("タイトル", validators=[DataRequired(), Length(max=120)])
@@ -11,6 +10,6 @@ class EntryForm(FlaskForm):
     submit = SubmitField("保存")
 
 class LoginForm(FlaskForm):
-    username = StringField("ユーザー名", validators=[DataRequired(), Length(max=50)])
+    email = StringField("メールアドレス", validators=[DataRequired(), Email()])
     password = PasswordField("パスワード", validators=[DataRequired()])
     submit = SubmitField("ログイン")

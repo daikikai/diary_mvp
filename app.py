@@ -111,16 +111,17 @@ def create_app():
         form = LoginForm()
         if form.validate_on_submit():
             u = db.session.execute(
-                db.select(User).where(User.username == form.username.data.strip())
+                db.select(User).where(User.email == form.email.data.strip())
             ).scalar_one_or_none()
             if u and u.check_password(form.password.data):
                 login_user(u)
                 flash("ログインしました", "success")
                 nxt = request.args.get("next")
                 return redirect(nxt or url_for("index"))
-            flash("ユーザー名またはパスワードが違います", "error")
+            flash("メールまたはパスワードが違います", "error")
             return render_template("login.html", form=form), 400
         return render_template("login.html", form=form), 400
+
 
     @app.post("/logout")
     @login_required
